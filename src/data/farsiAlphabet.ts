@@ -42,7 +42,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 't',
     exampleWords: {
       beginning: 'تلفن',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -60,7 +60,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'j',
     exampleWords: {
       beginning: 'جوان',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -78,7 +78,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'h',
     exampleWords: {
       beginning: 'حرف',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -87,7 +87,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'kh',
     exampleWords: {
       beginning: 'خوب',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -96,7 +96,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'd',
     exampleWords: {
       beginning: 'دست',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -105,7 +105,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'z',
     exampleWords: {
       beginning: 'ذکر',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -114,7 +114,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'r',
     exampleWords: {
       beginning: 'روز',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -123,7 +123,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'z',
     exampleWords: {
       beginning: 'زن',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -132,7 +132,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 's',
     exampleWords: {
       beginning: 'سلام',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -141,7 +141,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'sh',
     exampleWords: {
       beginning: 'شما',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -150,7 +150,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 's',
     exampleWords: {
       beginning: 'صبح',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -159,7 +159,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'z',
     exampleWords: {
       beginning: 'ضرب',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -168,7 +168,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 't',
     exampleWords: {
       beginning: 'طبیعت',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -177,7 +177,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'z',
     exampleWords: {
       beginning: 'ظاهر',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -186,7 +186,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'glottal stop',
     exampleWords: {
       beginning: 'علی',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -195,7 +195,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'gh',
     exampleWords: {
       beginning: 'غذا',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -204,7 +204,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'f',
     exampleWords: {
       beginning: 'فردا',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -213,7 +213,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'q',
     exampleWords: {
       beginning: 'قلم',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -222,7 +222,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'k',
     exampleWords: {
       beginning: 'کتاب',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -231,7 +231,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'g',
     exampleWords: {
       beginning: 'گل',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -240,7 +240,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'l',
     exampleWords: {
       beginning: 'لطفا',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -249,7 +249,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'm',
     exampleWords: {
       beginning: 'مادر',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -258,7 +258,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'n',
     exampleWords: {
       beginning: 'نام',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -267,7 +267,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'v/w',
     exampleWords: {
       beginning: 'وان',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -276,7 +276,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'h',
     exampleWords: {
       beginning: 'هوا',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
   {
@@ -285,7 +285,7 @@ export const farsiAlphabet: FarsiCharacter[] = [
     pronunciation: 'y',
     exampleWords: {
       beginning: 'یاد',
-      middleOrEnd: 'مدرسه',
+      middleOrEnd: '',
     },
   },
 ];

@@ -100,10 +100,23 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
     }
   };
 
-  const highlightCharacter = (word: string, targetChar: string) => {
-    // For now, return the word as a single string to maintain proper Farsi rendering
-    // We'll add highlighting in a future update using a different approach
-    return word;
+  const renderCharacterByCharacter = (word: string, targetChar: string) => {
+    const characters = word.split('').reverse();
+    return (
+      <View style={styles.characterBreakdownContainer}>
+        {characters.map((char, index) => (
+          <Text
+            key={index}
+            style={[
+              styles.characterBreakdownText,
+              char === targetChar && styles.highlightedCharacterText
+            ]}
+          >
+            {char}
+          </Text>
+        ))}
+      </View>
+    );
   };
 
   const renderQuestion = () => {
@@ -121,22 +134,26 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
             <View>
               <Text style={styles.mainCharacter}>{currentQuestion.correctAnswer.character}</Text>
               <View style={styles.exampleWords}>
-                <TouchableOpacity 
-                  onPress={() => handleCopyToClipboard(currentQuestion.correctAnswer.exampleWords.beginning)}
-                  style={styles.exampleWordContainer}
-                >
-                  <Text style={styles.exampleText}>
-                    {currentQuestion.correctAnswer.exampleWords.beginning}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={() => handleCopyToClipboard(currentQuestion.correctAnswer.exampleWords.middleOrEnd)}
-                  style={styles.exampleWordContainer}
-                >
-                  <Text style={styles.exampleText}>
-                    {currentQuestion.correctAnswer.exampleWords.middleOrEnd}
-                  </Text>
-                </TouchableOpacity>
+                <View style={styles.exampleWordContainer}>
+                  <TouchableOpacity 
+                    onPress={() => handleCopyToClipboard(currentQuestion.correctAnswer.exampleWords.beginning)}
+                  >
+                    <Text style={styles.exampleText}>
+                      {currentQuestion.correctAnswer.exampleWords.beginning}
+                    </Text>
+                  </TouchableOpacity>
+                  {renderCharacterByCharacter(currentQuestion.correctAnswer.exampleWords.beginning, currentQuestion.correctAnswer.character)}
+                </View>
+                <View style={styles.exampleWordContainer}>
+                  <TouchableOpacity 
+                    onPress={() => handleCopyToClipboard(currentQuestion.correctAnswer.exampleWords.middleOrEnd)}
+                  >
+                    <Text style={styles.exampleText}>
+                      {currentQuestion.correctAnswer.exampleWords.middleOrEnd}
+                    </Text>
+                  </TouchableOpacity>
+                  {renderCharacterByCharacter(currentQuestion.correctAnswer.exampleWords.middleOrEnd, currentQuestion.correctAnswer.character)}
+                </View>
               </View>
             </View>
           )}
@@ -313,8 +330,19 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#f8f8f8',
   },
-  highlightedCharacter: {
-    fontSize: 16,
+  characterBreakdownContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  characterBreakdownText: {
+    fontSize: 20,
+    color: '#666',
+    marginHorizontal: 1,
+  },
+  highlightedCharacterText: {
+    fontSize: 20,
     color: '#F44336',
     fontWeight: 'bold',
   },
