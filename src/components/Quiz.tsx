@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -76,8 +77,6 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
       };
       onFinish(result);
     }
-<<<<<<< HEAD
-=======
   };
 
   const handleCopyToClipboard = async (text: string) => {
@@ -87,7 +86,6 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
     } catch (error) {
       Alert.alert('Error', 'Failed to copy to clipboard');
     }
->>>>>>> main
   };
 
   const getAnswerText = (character: FarsiCharacter): string => {
@@ -214,6 +212,7 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Back</Text>
@@ -380,7 +379,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFEBEE',
   },
   optionText: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: '500',
     color: '#333',
   },
@@ -408,26 +407,15 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     backgroundColor: '#007AFF',
-<<<<<<< HEAD
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    marginTop: 16,
-=======
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
     marginTop: 12,
->>>>>>> main
     alignItems: 'center',
   },
   nextButtonText: {
     color: '#fff',
-<<<<<<< HEAD
-    fontSize: 16,
-=======
     fontSize: 15,
->>>>>>> main
     fontWeight: '600',
   },
 });
