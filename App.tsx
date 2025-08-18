@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { StatusBar } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import QuizModeSelection from './src/components/QuizModeSelection';
 import Quiz from './src/components/Quiz';
 import QuizResults from './src/components/QuizResults';
@@ -65,10 +66,10 @@ function App(): React.JSX.Element {
   };
 
   return (
-    <>
+    <SafeAreaProvider>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       {renderScreen()}
-    </>
+    </SafeAreaProvider>
   );
 }
 
