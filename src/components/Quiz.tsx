@@ -6,8 +6,9 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { FarsiCharacter } from '../data/farsiAlphabet';
 import { QuizMode, QuizQuestion, QuizState, QuizResult } from '../types/quiz';
 import { generateQuizQuestion, checkAnswer } from '../utils/quizUtils';
@@ -56,26 +57,34 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
       isCorrect,
       score: isCorrect ? prev.score + 1 : prev.score,
     }));
+  };
 
-    // Show feedback for 1.5 seconds before moving to next question
-    setTimeout(() => {
-      if (quizState.currentQuestionIndex < quizState.totalQuestions - 1) {
-        setQuizState(prev => ({
-          ...prev,
-          currentQuestionIndex: prev.currentQuestionIndex + 1,
-        }));
-        generateNewQuestion();
-      } else {
-        // Quiz finished
-        const result: QuizResult = {
-          score: isCorrect ? quizState.score + 1 : quizState.score,
-          totalQuestions: quizState.totalQuestions,
-          correctAnswers: isCorrect ? quizState.score + 1 : quizState.score,
-          incorrectAnswers: quizState.totalQuestions - (isCorrect ? quizState.score + 1 : quizState.score),
-        };
-        onFinish(result);
-      }
-    }, 1500);
+  const handleNextQuestion = () => {
+    if (quizState.currentQuestionIndex < quizState.totalQuestions - 1) {
+      setQuizState(prev => ({
+        ...prev,
+        currentQuestionIndex: prev.currentQuestionIndex + 1,
+      }));
+      generateNewQuestion();
+    } else {
+      // Quiz finished
+      const result: QuizResult = {
+        score: quizState.score,
+        totalQuestions: quizState.totalQuestions,
+        correctAnswers: quizState.score,
+        incorrectAnswers: quizState.totalQuestions - quizState.score,
+      };
+      onFinish(result);
+    }
+  };
+
+  const handleCopyToClipboard = async (text: string) => {
+    try {
+      await Clipboard.setString(text);
+      Alert.alert('Copied!', 'Word copied to clipboard');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to copy to clipboard');
+    }
   };
 
   const getAnswerText = (character: FarsiCharacter): string => {
@@ -89,6 +98,25 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
       default:
         return '';
     }
+  };
+
+  const renderCharacterByCharacter = (word: string, targetChar: string) => {
+    const characters = word.split('').reverse();
+    return (
+      <View style={styles.characterBreakdownContainer}>
+        {characters.map((char, index) => (
+          <Text
+            key={index}
+            style={[
+              styles.characterBreakdownText,
+              char === targetChar && styles.highlightedCharacterText
+            ]}
+          >
+            {char}
+          </Text>
+        ))}
+      </View>
+    );
   };
 
   const renderQuestion = () => {
@@ -106,12 +134,26 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
             <View>
               <Text style={styles.mainCharacter}>{currentQuestion.correctAnswer.character}</Text>
               <View style={styles.exampleWords}>
-                <Text style={styles.exampleText}>
-                  {currentQuestion.correctAnswer.exampleWords.beginning}
-                </Text>
-                <Text style={styles.exampleText}>
-                  {currentQuestion.correctAnswer.exampleWords.middleOrEnd}
-                </Text>
+                <View style={styles.exampleWordContainer}>
+                  <TouchableOpacity 
+                    onPress={() => handleCopyToClipboard(currentQuestion.correctAnswer.exampleWords.beginning)}
+                  >
+                    <Text style={styles.exampleText}>
+                      {currentQuestion.correctAnswer.exampleWords.beginning}
+                    </Text>
+                  </TouchableOpacity>
+                  {renderCharacterByCharacter(currentQuestion.correctAnswer.exampleWords.beginning, currentQuestion.correctAnswer.character)}
+                </View>
+                <View style={styles.exampleWordContainer}>
+                  <TouchableOpacity 
+                    onPress={() => handleCopyToClipboard(currentQuestion.correctAnswer.exampleWords.middleOrEnd)}
+                  >
+                    <Text style={styles.exampleText}>
+                      {currentQuestion.correctAnswer.exampleWords.middleOrEnd}
+                    </Text>
+                  </TouchableOpacity>
+                  {renderCharacterByCharacter(currentQuestion.correctAnswer.exampleWords.middleOrEnd, currentQuestion.correctAnswer.character)}
+                </View>
               </View>
             </View>
           )}
@@ -192,6 +234,14 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
             ]}>
               {quizState.isCorrect ? 'Correct!' : 'Incorrect!'}
             </Text>
+            <TouchableOpacity 
+              style={styles.nextButton} 
+              onPress={handleNextQuestion}
+            >
+              <Text style={styles.nextButtonText}>
+                {quizState.currentQuestionIndex < quizState.totalQuestions - 1 ? 'Next Question' : 'Finish Quiz'}
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
@@ -208,7 +258,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    padding: 12,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -230,52 +280,84 @@ const styles = StyleSheet.create({
     color: '#007AFF',
   },
   content: {
-    flexGrow: 1,
-    padding: 20,
+    flex: 1,
+    padding: 16,
+    justifyContent: 'space-between',
   },
   questionContainer: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 20,
   },
   questionText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 15,
     color: '#333',
   },
   mainDisplay: {
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
+    marginBottom: 15,
+    width: '100%',
   },
   mainCharacter: {
-    fontSize: 72,
+    fontSize: 56,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10,
+    marginBottom: 8,
+    textAlign: 'center',
   },
   mainText: {
-    fontSize: 48,
+    fontSize: 40,
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
   },
   exampleWords: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+    gap: 16,
   },
   exampleText: {
-    fontSize: 16,
+    fontSize: 28,
     color: '#666',
-    marginVertical: 2,
+    marginVertical: 1,
+  },
+  exampleWordContainer: {
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: '#f8f8f8',
+  },
+  characterBreakdownContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  characterBreakdownText: {
+    fontSize: 20,
+    color: '#666',
+    marginHorizontal: 1,
+  },
+  highlightedCharacterText: {
+    fontSize: 20,
+    color: '#F44336',
+    fontWeight: 'bold',
+  },
+  normalText: {
+    fontSize: 16,
+    color: '#333',
   },
   optionsContainer: {
-    marginBottom: 20,
+    marginBottom: 15,
   },
   optionButton: {
     backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    marginVertical: 8,
+    padding: 12,
+    borderRadius: 10,
+    marginVertical: 6,
     borderWidth: 2,
     borderColor: '#e0e0e0',
     alignItems: 'center',
@@ -293,7 +375,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFEBEE',
   },
   optionText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '500',
     color: '#333',
   },
@@ -307,10 +389,10 @@ const styles = StyleSheet.create({
   },
   feedbackContainer: {
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 15,
   },
   feedbackText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   correctFeedback: {
@@ -318,6 +400,19 @@ const styles = StyleSheet.create({
   },
   incorrectFeedback: {
     color: '#F44336',
+  },
+  nextButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  nextButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
 
