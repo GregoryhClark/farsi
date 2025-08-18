@@ -56,36 +56,37 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
       isCorrect,
       score: isCorrect ? prev.score + 1 : prev.score,
     }));
+  };
 
-    // Show feedback for 1.5 seconds before moving to next question
-    setTimeout(() => {
-      if (quizState.currentQuestionIndex < quizState.totalQuestions - 1) {
-        setQuizState(prev => ({
-          ...prev,
-          currentQuestionIndex: prev.currentQuestionIndex + 1,
-        }));
-        generateNewQuestion();
-      } else {
-        // Quiz finished
-        const result: QuizResult = {
-          score: isCorrect ? quizState.score + 1 : quizState.score,
-          totalQuestions: quizState.totalQuestions,
-          correctAnswers: isCorrect ? quizState.score + 1 : quizState.score,
-          incorrectAnswers: quizState.totalQuestions - (isCorrect ? quizState.score + 1 : quizState.score),
-        };
-        onFinish(result);
-      }
-    }, 1500);
+  const handleNextQuestion = () => {
+    if (quizState.currentQuestionIndex < quizState.totalQuestions - 1) {
+      setQuizState(prev => ({
+        ...prev,
+        currentQuestionIndex: prev.currentQuestionIndex + 1,
+      }));
+      generateNewQuestion();
+    } else {
+      // Quiz finished
+      const result: QuizResult = {
+        score: quizState.score,
+        totalQuestions: quizState.totalQuestions,
+        correctAnswers: quizState.score,
+        incorrectAnswers: quizState.totalQuestions - quizState.score,
+      };
+      onFinish(result);
+    }
   };
 
   const getAnswerText = (character: FarsiCharacter): string => {
     switch (mode) {
       case 'character-to-name':
-      case 'name-to-character':
         return character.romanizedName;
+      case 'name-to-character':
+        return character.character;
       case 'character-to-pronunciation':
-      case 'pronunciation-to-character':
         return character.pronunciation;
+      case 'pronunciation-to-character':
+        return character.character;
       default:
         return '';
     }
@@ -192,6 +193,14 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
             ]}>
               {quizState.isCorrect ? 'Correct!' : 'Incorrect!'}
             </Text>
+            <TouchableOpacity 
+              style={styles.nextButton} 
+              onPress={handleNextQuestion}
+            >
+              <Text style={styles.nextButtonText}>
+                {quizState.currentQuestionIndex < quizState.totalQuestions - 1 ? 'Next Question' : 'Finish Quiz'}
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
@@ -318,6 +327,19 @@ const styles = StyleSheet.create({
   },
   incorrectFeedback: {
     color: '#F44336',
+  },
+  nextButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  nextButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
