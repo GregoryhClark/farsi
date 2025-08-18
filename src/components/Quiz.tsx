@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -90,11 +91,13 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
   const getAnswerText = (character: FarsiCharacter): string => {
     switch (mode) {
       case 'character-to-name':
-      case 'name-to-character':
         return character.romanizedName;
+      case 'name-to-character':
+        return character.character;
       case 'character-to-pronunciation':
-      case 'pronunciation-to-character':
         return character.pronunciation;
+      case 'pronunciation-to-character':
+        return character.character;
       default:
         return '';
     }
@@ -209,6 +212,7 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Back</Text>
@@ -375,7 +379,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFEBEE',
   },
   optionText: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: '500',
     color: '#333',
   },
