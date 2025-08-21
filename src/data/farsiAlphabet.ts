@@ -304,3 +304,102 @@ export const getRandomCharacters = (
 export const getRandomCharacter = (): FarsiCharacter => {
   return farsiAlphabet[Math.floor(Math.random() * farsiAlphabet.length)];
 };
+
+export const getRandomCharactersWithUniquePronunciations = (
+  excludeCharacter: FarsiCharacter,
+  count: number,
+): FarsiCharacter[] => {
+  const availableCharacters = farsiAlphabet.filter(
+    char => char.character !== excludeCharacter.character,
+  );
+  
+  // Create a map to track used pronunciations
+  const usedPronunciations = new Set<string>();
+  usedPronunciations.add(excludeCharacter.pronunciation);
+  
+  const uniqueCharacters: FarsiCharacter[] = [];
+  
+  // Shuffle the available characters
+  const shuffled = availableCharacters.sort(() => 0.5 - Math.random());
+  
+  for (const char of shuffled) {
+    if (uniqueCharacters.length >= count) break;
+    
+    // Only add if pronunciation is not already used
+    if (!usedPronunciations.has(char.pronunciation)) {
+      uniqueCharacters.push(char);
+      usedPronunciations.add(char.pronunciation);
+    }
+  }
+  
+  return uniqueCharacters;
+};
+
+export const getRandomCharactersWithBalancedPronunciations = (
+  excludeCharacter: FarsiCharacter,
+  count: number,
+): FarsiCharacter[] => {
+  const availableCharacters = farsiAlphabet.filter(
+    char => char.character !== excludeCharacter.character,
+  );
+  
+  // Define multi-letter pronunciations
+  const multiLetterPronunciations = ['ch', 'kh', 'sh', 'gh', 'v/w', 'glottal stop'];
+  
+  // Separate characters by pronunciation type
+  const singleLetterChars = availableCharacters.filter(
+    char => !multiLetterPronunciations.includes(char.pronunciation)
+  );
+  const multiLetterChars = availableCharacters.filter(
+    char => multiLetterPronunciations.includes(char.pronunciation)
+  );
+  
+  // Create a map to track used pronunciations
+  const usedPronunciations = new Set<string>();
+  usedPronunciations.add(excludeCharacter.pronunciation);
+  
+  const uniqueCharacters: FarsiCharacter[] = [];
+  
+  // Calculate how many of each type we want (roughly balanced)
+  const singleLetterCount = Math.ceil(count / 2);
+  const multiLetterCount = count - singleLetterCount;
+  
+  // Shuffle both arrays
+  const shuffledSingle = singleLetterChars.sort(() => 0.5 - Math.random());
+  const shuffledMulti = multiLetterChars.sort(() => 0.5 - Math.random());
+  
+  // Add single letter characters first
+  for (const char of shuffledSingle) {
+    if (uniqueCharacters.length >= singleLetterCount) break;
+    
+    if (!usedPronunciations.has(char.pronunciation)) {
+      uniqueCharacters.push(char);
+      usedPronunciations.add(char.pronunciation);
+    }
+  }
+  
+  // Add multi-letter characters
+  for (const char of shuffledMulti) {
+    if (uniqueCharacters.length >= count) break;
+    
+    if (!usedPronunciations.has(char.pronunciation)) {
+      uniqueCharacters.push(char);
+      usedPronunciations.add(char.pronunciation);
+    }
+  }
+  
+  // If we don't have enough characters, fill with remaining single letter ones
+  if (uniqueCharacters.length < count) {
+    for (const char of shuffledSingle) {
+      if (uniqueCharacters.length >= count) break;
+      
+      if (!usedPronunciations.has(char.pronunciation)) {
+        uniqueCharacters.push(char);
+        usedPronunciations.add(char.pronunciation);
+      }
+    }
+  }
+  
+  // Shuffle the final result
+  return uniqueCharacters.sort(() => 0.5 - Math.random());
+};
