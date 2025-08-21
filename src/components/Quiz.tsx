@@ -13,6 +13,8 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { FarsiCharacter } from '../data/farsiAlphabet';
 import { QuizMode, QuizQuestion, QuizState, QuizResult } from '../types/quiz';
 import { generateQuizQuestion, checkAnswer } from '../utils/quizUtils';
+import PlayButton from './PlayButton';
+import { cleanupAudio } from '../utils/audioUtils';
 
 interface QuizProps {
   mode: QuizMode;
@@ -33,6 +35,11 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
 
   useEffect(() => {
     generateNewQuestion();
+    
+    // Cleanup audio when component unmounts
+    return () => {
+      cleanupAudio();
+    };
   }, []);
 
   const generateNewQuestion = () => {
@@ -162,11 +169,19 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
           )}
           
           {(mode === 'name-to-character' || mode === 'pronunciation-to-character') && (
-            <Text style={styles.mainText}>
-              {mode === 'name-to-character' 
-                ? currentQuestion.correctAnswer.romanizedName 
-                : currentQuestion.correctAnswer.pronunciation}
-            </Text>
+            <View style={styles.mainTextContainer}>
+              <Text style={styles.mainText}>
+                {mode === 'name-to-character' 
+                  ? currentQuestion.correctAnswer.romanizedName 
+                  : currentQuestion.correctAnswer.pronunciation}
+              </Text>
+              {mode === 'pronunciation-to-character' && (
+                <PlayButton 
+                  pronunciation={currentQuestion.correctAnswer.pronunciation}
+                  size="large"
+                />
+              )}
+            </View>
           )}
         </View>
       </View>
@@ -198,13 +213,13 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
           onPress={() => handleAnswerSelect(option)}
           disabled={quizState.isAnswered}
         >
-          <Text style={[
-            styles.optionText,
-            quizState.isAnswered && isCorrect && styles.correctText,
-            quizState.isAnswered && isSelected && !isCorrect && styles.incorrectText,
-          ]}>
-            {getAnswerText(option)}
-          </Text>
+                     <Text style={[
+             styles.optionText,
+             quizState.isAnswered && isCorrect && styles.correctText,
+             quizState.isAnswered && isSelected && !isCorrect && styles.incorrectText,
+           ]}>
+             {getAnswerText(option)}
+           </Text>
         </TouchableOpacity>
       );
     });
@@ -311,6 +326,11 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 8,
     textAlign: 'center',
+  },
+  mainTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   mainText: {
     fontSize: 40,

@@ -2,12 +2,19 @@ import {
   FarsiCharacter,
   getRandomCharacters,
   getRandomCharacter,
+  getRandomCharactersWithUniquePronunciations,
+  getRandomCharactersWithBalancedPronunciations,
 } from '../data/farsiAlphabet';
 import { QuizQuestion, QuizMode } from '../types/quiz';
 
 export const generateQuizQuestion = (mode: QuizMode): QuizQuestion => {
   const correctAnswer = getRandomCharacter();
-  const wrongOptions = getRandomCharacters(correctAnswer, 4);
+  
+  // Use balanced pronunciations for character-to-pronunciation mode
+  const wrongOptions = mode === 'character-to-pronunciation' 
+    ? getRandomCharactersWithBalancedPronunciations(correctAnswer, 4)
+    : getRandomCharacters(correctAnswer, 4);
+    
   const options = [...wrongOptions, correctAnswer].sort(
     () => 0.5 - Math.random(),
   );
