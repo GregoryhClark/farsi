@@ -20,25 +20,37 @@ const QuizModeSelection: React.FC<QuizModeSelectionProps> = ({ onSelectMode }) =
       mode: 'character-to-name',
       title: 'Character to Name',
       description: 'See a Farsi character and choose its romanized name',
-      icon: 'ا → alef',
+      icon: '\u202Aا\u202C → alef',
     },
     {
       mode: 'name-to-character',
       title: 'Name to Character',
       description: 'See a romanized name and choose the correct Farsi character',
-      icon: 'alef → ا',
+      icon: 'alef → \u202Aا\u202C',
     },
     {
       mode: 'character-to-pronunciation',
       title: 'Character to Sound',
       description: 'See a Farsi character and choose how it sounds',
-      icon: 'ا → ā',
+      icon: '\u202Aا\u202C → ā',
     },
     {
       mode: 'pronunciation-to-character',
       title: 'Sound to Character',
       description: 'See a pronunciation and choose the correct Farsi character',
-      icon: 'ā → ا',
+      icon: 'ā → \u202Aا\u202C',
+    },
+    {
+      mode: 'word-to-english',
+      title: 'Word to English',
+      description: 'See a Farsi word and choose its English meaning',
+      icon: '\u202Aسگ\u202C → dog',
+    },
+    {
+      mode: 'english-to-word',
+      title: 'English to Word',
+      description: 'See an English word and choose the correct Farsi translation',
+      icon: 'dog → \u202Aسگ\u202C',
     },
   ];
 
@@ -57,7 +69,7 @@ const QuizModeSelection: React.FC<QuizModeSelectionProps> = ({ onSelectMode }) =
             onPress={() => onSelectMode(quizMode.mode)}
           >
             <View style={styles.modeHeader}>
-              <Text style={styles.modeIcon}>{quizMode.icon}</Text>
+              <Text style={[styles.modeIcon, { writingDirection: 'ltr' }]}>{quizMode.icon}</Text>
               <Text style={styles.modeTitle}>{quizMode.title}</Text>
             </View>
             <Text style={styles.modeDescription}>{quizMode.description}</Text>

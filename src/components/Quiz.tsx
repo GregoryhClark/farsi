@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { FarsiCharacter } from '../data/farsiAlphabet';
+import { FarsiWord } from '../data/farsiWords';
 import { QuizMode, QuizQuestion, QuizState, QuizResult } from '../types/quiz';
 import { generateQuizQuestion, checkAnswer } from '../utils/quizUtils';
 import PlayButton from './PlayButton';
@@ -53,7 +54,7 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
     }));
   };
 
-  const handleAnswerSelect = (selectedAnswer: FarsiCharacter) => {
+  const handleAnswerSelect = (selectedAnswer: FarsiCharacter | FarsiWord) => {
     if (quizState.isAnswered || !quizState.currentQuestion) return;
 
     const isCorrect = checkAnswer(selectedAnswer, quizState.currentQuestion.correctAnswer);
@@ -95,18 +96,31 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
     }
   };
 
-  const getAnswerText = (character: FarsiCharacter): string => {
-    switch (mode) {
-      case 'character-to-name':
-        return character.romanizedName;
-      case 'name-to-character':
-        return character.character;
-      case 'character-to-pronunciation':
-        return character.pronunciation;
-      case 'pronunciation-to-character':
-        return character.character;
-      default:
-        return '';
+  const getAnswerText = (answer: FarsiCharacter | FarsiWord): string => {
+    if ('character' in answer) {
+      // Character-based quiz modes
+      switch (mode) {
+        case 'character-to-name':
+          return answer.romanizedName;
+        case 'name-to-character':
+          return answer.character;
+        case 'character-to-pronunciation':
+          return answer.pronunciation;
+        case 'pronunciation-to-character':
+          return answer.character;
+        default:
+          return '';
+      }
+    } else {
+      // Word-based quiz modes
+      switch (mode) {
+        case 'word-to-english':
+          return answer.english;
+        case 'english-to-word':
+          return answer.farsi;
+        default:
+          return '';
+      }
     }
   };
 
@@ -138,37 +152,37 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
       <View style={styles.questionContainer}>
         <Text style={styles.questionText}>{currentQuestion.question}</Text>
         
-        {/* Show the main character/name/pronunciation */}
+        {/* Show the main character/name/pronunciation/word */}
         <View style={styles.mainDisplay}>
-          {(mode === 'character-to-name' || mode === 'character-to-pronunciation') && (
+          {(mode === 'character-to-name' || mode === 'character-to-pronunciation') && 'character' in currentQuestion.correctAnswer && (
             <View>
               <Text style={styles.mainCharacter}>{currentQuestion.correctAnswer.character}</Text>
               <View style={styles.exampleWords}>
                 <View style={styles.exampleWordContainer}>
                   <TouchableOpacity 
-                    onPress={() => handleCopyToClipboard(currentQuestion.correctAnswer.exampleWords.beginning)}
+                    onPress={() => handleCopyToClipboard((currentQuestion.correctAnswer as FarsiCharacter).exampleWords.beginning)}
                   >
                     <Text style={styles.exampleText}>
-                      {currentQuestion.correctAnswer.exampleWords.beginning}
+                      {(currentQuestion.correctAnswer as FarsiCharacter).exampleWords.beginning}
                     </Text>
                   </TouchableOpacity>
-                  {renderCharacterByCharacter(currentQuestion.correctAnswer.exampleWords.beginning, currentQuestion.correctAnswer.character)}
+                  {renderCharacterByCharacter((currentQuestion.correctAnswer as FarsiCharacter).exampleWords.beginning, currentQuestion.correctAnswer.character)}
                 </View>
                 <View style={styles.exampleWordContainer}>
                   <TouchableOpacity 
-                    onPress={() => handleCopyToClipboard(currentQuestion.correctAnswer.exampleWords.middleOrEnd)}
+                    onPress={() => handleCopyToClipboard((currentQuestion.correctAnswer as FarsiCharacter).exampleWords.middleOrEnd)}
                   >
                     <Text style={styles.exampleText}>
-                      {currentQuestion.correctAnswer.exampleWords.middleOrEnd}
+                      {(currentQuestion.correctAnswer as FarsiCharacter).exampleWords.middleOrEnd}
                     </Text>
                   </TouchableOpacity>
-                  {renderCharacterByCharacter(currentQuestion.correctAnswer.exampleWords.middleOrEnd, currentQuestion.correctAnswer.character)}
+                  {renderCharacterByCharacter((currentQuestion.correctAnswer as FarsiCharacter).exampleWords.middleOrEnd, currentQuestion.correctAnswer.character)}
                 </View>
               </View>
             </View>
           )}
           
-          {(mode === 'name-to-character' || mode === 'pronunciation-to-character') && (
+          {(mode === 'name-to-character' || mode === 'pronunciation-to-character') && 'romanizedName' in currentQuestion.correctAnswer && (
             <View style={styles.mainTextContainer}>
               <Text style={styles.mainText}>
                 {mode === 'name-to-character' 
@@ -183,6 +197,16 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
               )}
             </View>
           )}
+
+          {(mode === 'word-to-english' || mode === 'english-to-word') && 'farsi' in currentQuestion.correctAnswer && (
+            <View style={styles.mainTextContainer}>
+              <Text style={styles.mainText}>
+                {mode === 'word-to-english' 
+                  ? currentQuestion.correctAnswer.farsi 
+                  : currentQuestion.correctAnswer.english}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     );
@@ -192,8 +216,26 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
     if (!quizState.currentQuestion) return null;
 
     return quizState.currentQuestion.options.map((option, index) => {
-      const isSelected = quizState.selectedAnswer?.character === option.character;
-      const isCorrect = option.character === quizState.currentQuestion!.correctAnswer.character;
+      const isSelected = (() => {
+        if (!quizState.selectedAnswer) return false;
+        if ('character' in option && 'character' in quizState.selectedAnswer) {
+          return quizState.selectedAnswer.character === option.character;
+        }
+        if ('farsi' in option && 'farsi' in quizState.selectedAnswer) {
+          return quizState.selectedAnswer.farsi === option.farsi;
+        }
+        return false;
+      })();
+      
+      const isCorrect = (() => {
+        if ('character' in option && 'character' in quizState.currentQuestion!.correctAnswer) {
+          return option.character === quizState.currentQuestion!.correctAnswer.character;
+        }
+        if ('farsi' in option && 'farsi' in quizState.currentQuestion!.correctAnswer) {
+          return option.farsi === quizState.currentQuestion!.correctAnswer.farsi;
+        }
+        return false;
+      })();
       
       let buttonStyle: any = styles.optionButton;
       if (quizState.isAnswered) {
@@ -213,13 +255,13 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
           onPress={() => handleAnswerSelect(option)}
           disabled={quizState.isAnswered}
         >
-                     <Text style={[
-             styles.optionText,
-             quizState.isAnswered && isCorrect && styles.correctText,
-             quizState.isAnswered && isSelected && !isCorrect && styles.incorrectText,
-           ]}>
-             {getAnswerText(option)}
-           </Text>
+          <Text style={[
+            styles.optionText,
+            quizState.isAnswered && isCorrect && styles.correctText,
+            quizState.isAnswered && isSelected && !isCorrect && styles.incorrectText,
+          ]}>
+            {getAnswerText(option)}
+          </Text>
         </TouchableOpacity>
       );
     });
