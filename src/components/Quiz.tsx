@@ -205,6 +205,11 @@ const Quiz: React.FC<QuizProps> = ({ mode, onFinish, onBack }) => {
                   ? currentQuestion.correctAnswer.farsi 
                   : currentQuestion.correctAnswer.english}
               </Text>
+              {mode === 'word-to-english'  || mode === 'english-to-word' && quizState.isAnswered && (
+                <Text style={[styles.normalText, { marginLeft: 8 }]}>
+                  {(currentQuestion.correctAnswer as FarsiWord).romanized}
+                </Text>
+              )}
             </View>
           )}
         </View>
